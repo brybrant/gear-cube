@@ -2,7 +2,7 @@
 
 [Gear Cube](https://brybrant.github.io/gear-cube/) is a 3D experiment made with [Three.js](https://threejs.org/) and [Vite](https://vitejs.dev) by Matt Bryant.
 
-Model is based on this [thing](https://www.thingiverse.com/thing:10483) by [@emmett](https://www.thingiverse.com/emmett)
+Model is based on this [thing](https://www.thingiverse.com/thing:10483) by [@emmett](https://www.thingiverse.com/emmett) which is licensed under [CC-BY-SA](https://creativecommons.org/licenses/by-sa/3.0/). The model has been decimated and compressed for faster transmission.
 
 ## Fonts used
 
