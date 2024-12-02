@@ -1,0 +1,39 @@
+{
+  "name": "@brybrant/gear-cube",
+  "author": "brybrant",
+  "license": "GPL-3.0-only",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brybrant/gear-cube.git"
+  },
+  "homepage": "https://brybrant.github.io/gear-cube/",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "three": "^0.171.0"
+  },
+  "devDependencies": {
+    "@brybrant/configs": "github:brybrant/configs",
+    "@brybrant/sass-okhsv-okhsl": "^1.0.0",
+    "@brybrant/svg-icons": "github:brybrant/svg-icons",
+    "globals": "^15.12.0",
+    "sass-embedded": "^1.80.6",
+    "vite": "^6.0.1",
+    "vite-plugin-eslint2": "^5.0.3",
+    "vite-plugin-stylelint": "^6.0.0",
+    "vite-plugin-svgo": "^1.6.2"
+  },
+  "browserslist": [
+    "> 1%, not dead, not ie 11, not op_mini all"
+  ]
+}
