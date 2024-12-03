@@ -1,4 +1,5 @@
 dist
+models
 node_modules
 .eslintcache
 .stylelintcache
