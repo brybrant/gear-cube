@@ -12,7 +12,7 @@ import {
 
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-import GitHubSVG from '../node_modules/@brybrant/svg-icons/GitHub.svg';
+import GitHubSVG from '@brybrant/svg-icons/GitHub.svg';
 
 /** @type {HTMLCanvasElement} */
 const canvas = document.getElementById('background');
@@ -179,10 +179,10 @@ Promise.all([gearLargeLoaded, gearSmallLoaded, gearCenterLoaded]).then(
 
     scene.add(light1, light2, light3, gearCube);
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
 
     window.addEventListener('resize', () => {
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(window.innerWidth, window.innerHeight, false);
 
       aspectRatio = window.innerHeight / window.innerWidth;
       aspectMultiplier = Math.max(aspectRatio, 1);

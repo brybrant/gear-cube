@@ -3,7 +3,7 @@
   "author": "brybrant",
   "license": "GPL-3.0-only",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,22 +16,21 @@
   },
   "homepage": "https://brybrant.github.io/gear-cube/",
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": "^20.19.0 || >=22.12.0"
   },
   "dependencies": {
-    "three": "^0.171.0"
+    "three": "^0.178.0"
   },
   "devDependencies": {
     "@brybrant/configs": "github:brybrant/configs",
-    "@brybrant/sass-okhsv-okhsl": "^1.0.0",
+    "@brybrant/sass-okhsv-okhsl": "^1.0.1",
     "@brybrant/svg-icons": "github:brybrant/svg-icons",
-    "globals": "^15.13.0",
-    "sass-embedded": "^1.81.1",
-    "vite": "^6.0.2",
-    "vite-plugin-eslint2": "^5.0.3",
-    "vite-plugin-stylelint": "^6.0.0",
-    "vite-plugin-svgo": "^1.6.2"
+    "globals": "^16.3.0",
+    "sass-embedded": "^1.89.2",
+    "vite": "^7.0.4",
+    "vite-plugin-eslint2": "^5.0.4",
+    "vite-plugin-stylelint": "^6.0.2",
+    "vite-plugin-svgo": "^2.0.0"
   },
   "browserslist": [
     "> 1%, not dead, not ie 11, not op_mini all"

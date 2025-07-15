@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import eslintPlugin from 'vite-plugin-eslint2';
 import stylelintPlugin from 'vite-plugin-stylelint';
 import svgoPlugin from 'vite-plugin-svgo';
+
 import threeCompressPlugin from './compressTHREE.js';
 
 import * as configs from '@brybrant/configs';
