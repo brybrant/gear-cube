@@ -1,0 +1,36 @@
+@use 'sass:list';
+@use 'sass:math';
+
+/// @param {Number} $radius - Radius of the stroke
+/// @param {Number} $blur - Blur radius of the stroke
+/// @param {Number} $accuracy - Controls the *resolution* of the stroke
+/// @returns {List} comma-separated values for `text-shadow` CSS property
+/// 
+/// @example
+///   ```scss
+///   .example {
+///     text-shadow: text-stroke(0.0625rem, 0.03125rem, 1, #fff);
+///   }
+///   ```
+@function text-stroke($radius: 1px, $blur: 1px, $accuracy: 1, $color: #000) {
+  $shadow: ();
+
+  $accuracy: math.clamp(1, math.round($accuracy), 4);
+
+  $iterations: math.pow(2, 2 + $accuracy);
+
+  $degrees: math.div(360deg, $iterations);
+
+  @for $i from 0 to $iterations {
+    $offset-x: math.sin($i * $degrees) * $radius;
+    $offset-y: math.cos($i * $degrees) * $radius;
+
+    $shadow: list.append(
+      $shadow,
+      $offset-x $offset-y $blur $color,
+      $separator: comma,
+    );
+  }
+
+  @return $shadow;
+}
