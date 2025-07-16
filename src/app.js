@@ -14,6 +14,8 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 import GitHubSVG from '@brybrant/svg-icons/GitHub.svg';
 
+/** @typedef {import('three').BufferGeometry} Geometry */
+
 /** @type {HTMLCanvasElement} */
 const canvas = document.getElementById('background');
 
@@ -25,12 +27,27 @@ const renderer = new WebGLRenderer({
 
 renderer.setPixelRatio(window.devicePixelRatio);
 
+let size = Math.min(window.innerWidth, window.innerHeight);
+
+renderer.setSize(size, size, false);
+
+function resize() {
+  const lastSize = size;
+
+  size = Math.min(window.innerWidth, window.innerHeight);
+
+  if (lastSize === size) return;
+
+  renderer.setSize(size, size, false);
+}
+
 const scene = new Scene();
 
 const loader = new DRACOLoader();
 
 loader.setPath('/gear-cube/');
 
+// https://github.com/google/draco
 loader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
 
 const material = new MeshPhongMaterial({ shininess: 1000 });
@@ -53,99 +70,105 @@ const isoAngle = Math.atan(Math.sin(Math.PI / 4));
 
 const gearCube = new Group();
 
-const gearLargeLoaded = loader.loadAsync('large-gear.drc').then((geometry) => {
-  // This axis to spin the gear (geometry Z)
-  geometry.rotateZ(30 * deg2rad);
-  geometry.translate(0, 0, 12.05);
+const gearLargeLoaded = loader.loadAsync('large-gear.drc').then(
+  /** @param {Geometry} geometry */
+  (geometry) => {
+    // This axis to spin the gear (geometry Z)
+    geometry.rotateZ(30 * deg2rad);
+    geometry.translate(0, 0, 12.05);
 
-  const gearLarge1 = new Mesh(geometry, material);
+    const gearLarge1 = new Mesh(geometry, material);
 
-  const gearLarge2 = new Group();
-  gearLarge2.add(gearLarge1.clone().rotateZ(60 * deg2rad));
+    const gearLarge2 = new Group();
+    gearLarge2.add(gearLarge1.clone().rotateZ(60 * deg2rad));
 
-  const gearLarge3 = gearLarge1.clone();
+    const gearLarge3 = gearLarge1.clone();
 
-  const gearLarge4 = gearLarge2.clone();
+    const gearLarge4 = gearLarge2.clone();
 
-  gearLarge1.rotateY(-deg90);
-  gearLarge1.rotateX(-isoAngle);
+    gearLarge1.rotateY(-deg90);
+    gearLarge1.rotateX(-isoAngle);
 
-  gearLarge2.rotateX(isoAngle);
+    gearLarge2.rotateX(isoAngle);
 
-  gearLarge3.rotateY(deg90);
-  gearLarge3.rotateX(-isoAngle);
+    gearLarge3.rotateY(deg90);
+    gearLarge3.rotateX(-isoAngle);
 
-  gearLarge4.rotateY(deg180);
-  gearLarge4.rotateX(isoAngle);
+    gearLarge4.rotateY(deg180);
+    gearLarge4.rotateX(isoAngle);
 
-  gearCube.add(gearLarge1);
-  gearCube.add(gearLarge2);
-  gearCube.add(gearLarge3);
-  gearCube.add(gearLarge4);
+    gearCube.add(gearLarge1);
+    gearCube.add(gearLarge2);
+    gearCube.add(gearLarge3);
+    gearCube.add(gearLarge4);
 
-  return geometry;
-});
+    return geometry;
+  },
+);
 
-const gearSmallLoaded = loader.loadAsync('small-gear.drc').then((geometry) => {
-  // This axis to spin the gear (geometry Z)
-  geometry.rotateZ(30 * deg2rad);
-  geometry.translate(0, 0, 16.85);
+const gearSmallLoaded = loader.loadAsync('small-gear.drc').then(
+  /** @param {Geometry} geometry */
+  (geometry) => {
+    // This axis to spin the gear (geometry Z)
+    geometry.rotateZ(30 * deg2rad);
+    geometry.translate(0, 0, 16.85);
 
-  const gearSmall1 = new Mesh(geometry, material);
+    const gearSmall1 = new Mesh(geometry, material);
 
-  const gearSmall2 = new Group();
-  gearSmall2.add(gearSmall1.clone().rotateZ(60 * deg2rad));
+    const gearSmall2 = new Group();
+    gearSmall2.add(gearSmall1.clone().rotateZ(60 * deg2rad));
 
-  const gearSmall3 = gearSmall1.clone();
+    const gearSmall3 = gearSmall1.clone();
 
-  const gearSmall4 = gearSmall2.clone();
+    const gearSmall4 = gearSmall2.clone();
 
-  gearSmall1.rotateX(-isoAngle);
+    gearSmall1.rotateX(-isoAngle);
 
-  gearSmall2.rotateY(deg90);
-  gearSmall2.rotateX(isoAngle);
+    gearSmall2.rotateY(deg90);
+    gearSmall2.rotateX(isoAngle);
 
-  gearSmall3.rotateY(deg180);
-  gearSmall3.rotateX(-isoAngle);
+    gearSmall3.rotateY(deg180);
+    gearSmall3.rotateX(-isoAngle);
 
-  gearSmall4.rotateY(-deg90);
-  gearSmall4.rotateX(isoAngle);
+    gearSmall4.rotateY(-deg90);
+    gearSmall4.rotateX(isoAngle);
 
-  gearCube.add(gearSmall1);
-  gearCube.add(gearSmall2);
-  gearCube.add(gearSmall3);
-  gearCube.add(gearSmall4);
+    gearCube.add(gearSmall1);
+    gearCube.add(gearSmall2);
+    gearCube.add(gearSmall3);
+    gearCube.add(gearSmall4);
 
-  return geometry;
-});
+    return geometry;
+  },
+);
 
-const gearCenterLoaded = loader.loadAsync('center.drc').then((geometry) => {
-  geometry.rotateX(deg90);
-  geometry.computeBoundingBox();
+const gearCenterLoaded = loader.loadAsync('center.drc').then(
+  /** @param {Geometry} geometry */
+  (geometry) => {
+    geometry.rotateX(deg90);
+    geometry.computeBoundingBox();
 
-  const gearCenter = new Mesh(geometry, material);
+    const gearCenter = new Mesh(geometry, material);
 
-  gearCenter.position.set(0, geometry.boundingBox.min.y / -2, 0);
+    gearCenter.position.set(0, geometry.boundingBox.min.y / -2, 0);
 
-  gearCube.add(gearCenter);
-});
+    gearCube.add(gearCenter);
+  },
+);
 
 Promise.all([gearLargeLoaded, gearSmallLoaded, gearCenterLoaded]).then(
   ([gearLarge, gearSmall]) => {
-    const frustum = 0.05;
+    const frustum = 42.5;
 
     const cameraTheta = deg90;
 
-    let aspectRatio = window.innerHeight / window.innerWidth;
-    let aspectMultiplier = Math.max(aspectRatio, 1);
-
     const camera = new OrthographicCamera(
-      window.innerWidth * aspectMultiplier * -frustum,
-      window.innerWidth * aspectMultiplier * frustum,
-      window.innerHeight * aspectMultiplier * frustum,
-      window.innerHeight * aspectMultiplier * -frustum,
-      -45,
-      45,
+      -frustum,
+      frustum,
+      frustum,
+      -frustum,
+      -frustum,
+      frustum,
     );
 
     camera.position.setFromSphericalCoords(1, deg90 - isoAngle, cameraTheta);
@@ -179,42 +202,41 @@ Promise.all([gearLargeLoaded, gearSmallLoaded, gearCenterLoaded]).then(
 
     scene.add(light1, light2, light3, gearCube);
 
-    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    window.addEventListener('resize', resize);
 
-    window.addEventListener('resize', () => {
-      renderer.setSize(window.innerWidth, window.innerHeight, false);
+    const rotationAngle = 6e-5;
 
-      aspectRatio = window.innerHeight / window.innerWidth;
-      aspectMultiplier = Math.max(aspectRatio, 1);
+    let frame = 0;
 
-      camera.left = window.innerWidth * aspectMultiplier * -frustum;
-      camera.right = window.innerWidth * aspectMultiplier * frustum;
-      camera.top = window.innerHeight * aspectMultiplier * frustum;
-      camera.bottom = window.innerHeight * aspectMultiplier * -frustum;
+    let lastTimestamp = 0;
 
-      camera.updateProjectionMatrix();
-    });
+    /** @param {number} timestamp */
+    function start(timestamp) {
+      lastTimestamp = timestamp;
 
-    const rotationAngle = 0.05 * deg2rad;
+      frame = requestAnimationFrame(render);
+    }
 
-    let frameId = 0;
+    /** @param {number} timestamp */
+    function render(timestamp) {
+      const deltaTime = timestamp - lastTimestamp;
+      lastTimestamp = timestamp;
 
-    function render(/* time */) {
       try {
-        gearLarge.rotateZ(-rotationAngle);
-        gearSmall.rotateZ(rotationAngle * 2);
-        gearCube.rotateY(rotationAngle * 3);
+        gearLarge.rotateZ(-rotationAngle * deltaTime);
+        gearSmall.rotateZ(rotationAngle * deltaTime * 2);
+        gearCube.rotateY(rotationAngle * deltaTime * 3);
 
         renderer.render(scene, camera);
 
-        frameId = requestAnimationFrame(render);
+        frame = requestAnimationFrame(render);
       } catch (error) {
         console.error(error);
-        return cancelAnimationFrame(frameId);
+        return cancelAnimationFrame(frame);
       }
     }
 
-    frameId = requestAnimationFrame(render);
+    frame = requestAnimationFrame(start);
 
     const main = document.createElement('main');
 
