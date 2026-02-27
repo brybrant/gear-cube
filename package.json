@@ -3,9 +3,10 @@
   "author": "brybrant",
   "license": "GPL-3.0-only",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
+    "models": "./compressOBJ.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -16,20 +17,21 @@
   },
   "homepage": "https://brybrant.github.io/gear-cube/",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": "^20.19.0 || >=22.13.0"
   },
   "dependencies": {
-    "three": "^0.178.0"
+    "three": "^0.183.1"
   },
   "devDependencies": {
     "@brybrant/configs": "github:brybrant/configs",
-    "@brybrant/sass-okhsv-okhsl": "^1.0.1",
+    "@brybrant/sass-okhsv-okhsl": "^1.1.0",
     "@brybrant/svg-icons": "github:brybrant/svg-icons",
-    "globals": "^16.3.0",
-    "sass-embedded": "^1.89.2",
-    "vite": "^7.0.4",
-    "vite-plugin-eslint2": "^5.0.4",
-    "vite-plugin-stylelint": "^6.0.2",
+    "draco3d": "^1.5.7",
+    "globals": "^17.3.0",
+    "sass-embedded": "^1.97.3",
+    "vite": "^7.3.1",
+    "vite-plugin-eslint2": "^5.0.5",
+    "vite-plugin-stylelint": "^6.0.4",
     "vite-plugin-svgo": "^2.0.0"
   },
   "browserslist": [

@@ -1,0 +1,9 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'>
+  <defs>
+    <filter id='a'>
+      <feTurbulence baseFrequency='1' numOctaves='6' stitchTiles='stitch' type='fractalNoise'/>
+    </filter>
+  </defs>
+  <path d='M0,0v9h9V0H0' fill='#000' />
+  <path d='M0,0v9h9V0H0' filter='url(#a)' />
+</svg>

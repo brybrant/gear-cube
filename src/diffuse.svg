@@ -1,0 +1,11 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'>
+  <defs>
+    <filter id='a'>
+      <feTurbulence baseFrequency='3' numOctaves='9' stitchTiles='stitch' result='b'/>
+      <feFlood flood-color='#fff' result='c'/>
+      <feComposite in='b' in2='c' operator='xor'/>
+    </filter>
+  </defs>
+  <path d='M0,0v1h1V0H0' fill='#ccc' />
+  <path d='M0,0v1h1V0H0' filter='url(#a)' />
+</svg>

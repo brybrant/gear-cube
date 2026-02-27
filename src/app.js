@@ -7,10 +7,15 @@ import {
   OrthographicCamera,
   PointLight,
   Scene,
+  SRGBColorSpace,
+  Texture,
   WebGLRenderer,
 } from 'three';
 
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+import DiffuseSVG from './diffuse.svg';
+import SpecularSVG from './specular.svg';
 
 import GitHubSVG from '@brybrant/svg-icons/GitHub.svg';
 
@@ -31,6 +36,12 @@ let size = Math.min(window.innerWidth, window.innerHeight);
 
 renderer.setSize(size, size, false);
 
+/**
+ * @callback resizeCallback
+ * @returns {void}
+ */
+
+/** @type {resizeCallback} */
 function resize() {
   const lastSize = size;
 
@@ -43,14 +54,59 @@ function resize() {
 
 const scene = new Scene();
 
-const loader = new DRACOLoader();
+const geometryLoader = new DRACOLoader();
 
-loader.setPath('/gear-cube/');
+geometryLoader.setPath('/gear-cube/');
 
 // https://github.com/google/draco
-loader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+geometryLoader.setDecoderPath(
+  'https://www.gstatic.com/draco/versioned/decoders/1.5.7/',
+);
 
-const material = new MeshPhongMaterial({ shininess: 1000 });
+// /** @param {string} elementID */
+/** @param {string} svg */
+function createTexture(svg) {
+  const encodedSVG = encodeURIComponent(svg);
+
+  return new Promise((resolve, reject) => {
+    const textureImage = new Image(1024, 1024);
+
+    /** Call after image loads */
+    const finish = () => (textureImage.onload = textureImage.onerror = null);
+
+    textureImage.onload = () => {
+      const textureCanvas = document.createElement('canvas');
+      textureCanvas.width = textureCanvas.height = 1024;
+      textureCanvas.getContext('2d').drawImage(textureImage, 0, 0, 1024, 1024);
+
+      const texture = new Texture(textureCanvas);
+      texture.colorSpace = SRGBColorSpace;
+      texture.needsUpdate = true;
+
+      resolve(texture);
+
+      finish();
+    };
+
+    textureImage.onerror = () => {
+      reject('Failed to load texture');
+
+      finish();
+    };
+
+    textureImage.src = `data:image/svg+xml;charset=utf-8,${encodedSVG}`;
+  });
+}
+
+const diffuseTexturePromise = createTexture(DiffuseSVG);
+
+const specularTexturePromise = createTexture(SpecularSVG);
+
+const material = new MeshPhongMaterial({
+  dithering: true,
+  shininess: 20,
+  specular: 0xbbbbbb,
+});
 
 const deg2rad = Math.PI / 180;
 
@@ -70,7 +126,7 @@ const isoAngle = Math.atan(Math.sin(Math.PI / 4));
 
 const gearCube = new Group();
 
-const gearLargeLoaded = loader.loadAsync('large-gear.drc').then(
+const gearLargePromise = geometryLoader.loadAsync('large-gear.drc').then(
   /** @param {Geometry} geometry */
   (geometry) => {
     // This axis to spin the gear (geometry Z)
@@ -106,7 +162,7 @@ const gearLargeLoaded = loader.loadAsync('large-gear.drc').then(
   },
 );
 
-const gearSmallLoaded = loader.loadAsync('small-gear.drc').then(
+const gearSmallPromise = geometryLoader.loadAsync('small-gear.drc').then(
   /** @param {Geometry} geometry */
   (geometry) => {
     // This axis to spin the gear (geometry Z)
@@ -142,7 +198,7 @@ const gearSmallLoaded = loader.loadAsync('small-gear.drc').then(
   },
 );
 
-const gearCenterLoaded = loader.loadAsync('center.drc').then(
+const gearCenterPromise = geometryLoader.loadAsync('center.drc').then(
   /** @param {Geometry} geometry */
   (geometry) => {
     geometry.rotateX(deg90);
@@ -156,101 +212,108 @@ const gearCenterLoaded = loader.loadAsync('center.drc').then(
   },
 );
 
-Promise.all([gearLargeLoaded, gearSmallLoaded, gearCenterLoaded]).then(
-  ([gearLarge, gearSmall]) => {
-    const frustum = 42.5;
+Promise.all([
+  diffuseTexturePromise,
+  specularTexturePromise,
+  gearLargePromise,
+  gearSmallPromise,
+  gearCenterPromise,
+]).then(([diffuseTexture, specularTexture, gearLarge, gearSmall]) => {
+  material.map = diffuseTexture;
+  material.specularMap = specularTexture;
 
-    const cameraTheta = deg90;
+  const frustum = 42.5;
 
-    const camera = new OrthographicCamera(
-      -frustum,
-      frustum,
-      frustum,
-      -frustum,
-      -frustum,
-      frustum,
-    );
+  const cameraTheta = deg90;
 
-    camera.position.setFromSphericalCoords(1, deg90 - isoAngle, cameraTheta);
+  const camera = new OrthographicCamera(
+    -frustum,
+    frustum,
+    frustum,
+    -frustum,
+    -frustum,
+    frustum,
+  );
 
-    camera.lookAt(gearCube.position);
+  camera.position.setFromSphericalCoords(1, deg90 - isoAngle, cameraTheta);
 
-    const lightRadius = 200;
-    const lightColor = 0xffffff;
+  camera.lookAt(gearCube.position);
 
-    const light1 = new PointLight(lightColor, 8e3);
-    const light2 = new PointLight(lightColor, 4e3);
-    const light3 = new PointLight(lightColor, 2e3);
+  const lightRadius = 200;
+  const lightColor = 0xffffff;
 
-    light1.position.setFromSphericalCoords(
-      lightRadius,
-      deg2rad * 45,
-      cameraTheta + deg2rad * 135,
-    );
+  const light1 = new PointLight(lightColor, 8e3);
+  const light2 = new PointLight(lightColor, 4e3);
+  const light3 = new PointLight(lightColor, 2e3);
 
-    light2.position.setFromSphericalCoords(
-      lightRadius,
-      deg2rad * 45,
-      cameraTheta - deg2rad * 112.5,
-    );
+  light1.position.setFromSphericalCoords(
+    lightRadius,
+    deg2rad * 45,
+    cameraTheta + deg2rad * 135,
+  );
 
-    light3.position.setFromSphericalCoords(
-      lightRadius,
-      deg2rad * 90,
-      cameraTheta + deg2rad * 22.5,
-    );
+  light2.position.setFromSphericalCoords(
+    lightRadius,
+    deg2rad * 45,
+    cameraTheta - deg2rad * 112.5,
+  );
 
-    scene.add(light1, light2, light3, gearCube);
+  light3.position.setFromSphericalCoords(
+    lightRadius,
+    deg2rad * 90,
+    cameraTheta + deg2rad * 22.5,
+  );
 
-    window.addEventListener('resize', resize);
+  scene.add(light1, light2, light3, gearCube);
 
-    const rotationAngle = 6e-5;
+  window.addEventListener('resize', resize);
 
-    let frame = 0;
+  const rotationAngle = 6e-5;
 
-    let lastTimestamp = 0;
+  let frame = 0;
 
-    /** @param {number} timestamp */
-    function start(timestamp) {
-      lastTimestamp = timestamp;
+  let lastTimestamp = 0;
+
+  /** @param {number} timestamp */
+  function start(timestamp) {
+    lastTimestamp = timestamp;
+
+    frame = requestAnimationFrame(render);
+  }
+
+  /** @param {number} timestamp */
+  function render(timestamp) {
+    const deltaTime = timestamp - lastTimestamp;
+    lastTimestamp = timestamp;
+
+    try {
+      gearLarge.rotateZ(-rotationAngle * deltaTime);
+      gearSmall.rotateZ(rotationAngle * deltaTime * 2);
+      gearCube.rotateY(rotationAngle * deltaTime * 3);
+
+      renderer.render(scene, camera);
 
       frame = requestAnimationFrame(render);
+    } catch (error) {
+      console.error(error);
+      return cancelAnimationFrame(frame);
     }
+  }
 
-    /** @param {number} timestamp */
-    function render(timestamp) {
-      const deltaTime = timestamp - lastTimestamp;
-      lastTimestamp = timestamp;
+  frame = requestAnimationFrame(start);
 
-      try {
-        gearLarge.rotateZ(-rotationAngle * deltaTime);
-        gearSmall.rotateZ(rotationAngle * deltaTime * 2);
-        gearCube.rotateY(rotationAngle * deltaTime * 3);
+  const main = document.createElement('main');
 
-        renderer.render(scene, camera);
+  const h1 = document.createElement('h1');
+  h1.innerText = 'GEAR CUBE';
+  main.appendChild(h1);
 
-        frame = requestAnimationFrame(render);
-      } catch (error) {
-        console.error(error);
-        return cancelAnimationFrame(frame);
-      }
-    }
+  const githubLink = document.createElement('a');
+  githubLink.className = 'button';
+  githubLink.href = 'https://github.com/brybrant/gear-cube';
+  githubLink.target = '_blank';
+  githubLink.innerHTML = GitHubSVG;
+  main.appendChild(githubLink);
 
-    frame = requestAnimationFrame(start);
-
-    const main = document.createElement('main');
-
-    const h1 = document.createElement('h1');
-    h1.innerText = 'GEAR CUBE';
-    main.appendChild(h1);
-
-    const githubLink = document.createElement('a');
-    githubLink.className = 'button';
-    githubLink.href = 'https://github.com/brybrant/gear-cube';
-    githubLink.target = '_blank';
-    githubLink.innerHTML = GitHubSVG;
-    main.appendChild(githubLink);
-
-    document.body.appendChild(main);
-  },
-);
+  document.body.appendChild(main);
+});
