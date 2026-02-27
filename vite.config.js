@@ -51,6 +51,9 @@ export default defineConfig(({ mode }) => {
           dithering_pars_fragment: true,
           specularmap_fragment: true,
           specularmap_pars_fragment: true,
+          uv_pars_fragment: true,
+          uv_pars_vertex: true,
+          uv_vertex: true,
         },
       }),
       stylelintPlugin({
