@@ -125,7 +125,8 @@ const materialShaders = {
   backgroundCube: 'backgroundCube', // Scene.background == CubeTexture
   cube: 'cube',
   depth: 'depth', // MeshDepthMaterial
-  distance: 'distanceRGBA', // MeshDistanceMaterial
+  distanceRGBA: 'distanceRGBA', // MeshDistanceMaterial (old threejs revision)
+  distance: 'distance', // MeshDistanceMaterial
   equirect: 'equirect',
   lineDashed: 'linedashed', // LineDashedMaterial
   basic: 'meshbasic', // LineBasicMaterial || MeshBasicMaterial
@@ -145,6 +146,7 @@ const materialOptions = Object.seal({
   backgroundCube: false,
   cube: false,
   depth: false,
+  distanceRGBA: false,
   distance: false,
   equirect: false,
   lineDashed: false,
@@ -165,6 +167,13 @@ const inlineShaderRegex = /(?<=\/\* glsl \*\/\s*`)[\s\S]+?(?=`)/g;
 
 const q = '[\'`"]';
 
+/**
+ * Rudimentary plugin to compress THREE.js
+ * @param {object} param0 - THREE compression options
+ * @param {boolean} param0.colorKeywords - Include THREE `colorKeywords`?
+ * @param {Partial<materialOptions>} param0.materials - Included material shaders
+ * @param {Partial<shaderOptions>} param0.shaders - Included shader chunks
+ */
 export default function threeCompressPlugin({
   colorKeywords = false,
   materials = {},
