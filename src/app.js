@@ -63,7 +63,6 @@ geometryLoader.setDecoderPath(
   'https://www.gstatic.com/draco/versioned/decoders/1.5.7/',
 );
 
-// /** @param {string} elementID */
 /** @param {string} svg */
 function createTexture(svg) {
   const encodedSVG = encodeURIComponent(svg);
