@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 /**
  * @param {number[]} vertices
@@ -49,6 +49,8 @@ const gearLarge = await readFile('./models/gear-large.obj', 'utf8');
 const gearSmall = await readFile('./models/gear-small.obj', 'utf8');
 
 const gearCenter = await readFile('./models/gear-center.obj', 'utf8');
+
+await mkdir('./src/models', { recursive: true });
 
 await writeFile('./src/models/gear-large.js', parseOBJ(gearLarge));
 
