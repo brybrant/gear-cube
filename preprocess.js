@@ -44,11 +44,11 @@ const parseOBJ = (data) => {
   return output(vertices, indices);
 };
 
-const gearLarge = await readFile('./models/large-gear.obj', 'utf8');
+const gearLarge = await readFile('./models/gear-large.obj', 'utf8');
 
-const gearSmall = await readFile('./models/small-gear.obj', 'utf8');
+const gearSmall = await readFile('./models/gear-small.obj', 'utf8');
 
-const gearCenter = await readFile('./models/center.obj', 'utf8');
+const gearCenter = await readFile('./models/gear-center.obj', 'utf8');
 
 await writeFile('./src/models/gear-large.js', parseOBJ(gearLarge));
 
