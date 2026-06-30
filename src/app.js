@@ -161,9 +161,7 @@ const rotationAngle = 6e-5;
 
 let lastTimestamp = performance.now();
 
-/**
- * @param {number} timestamp
- */
+/** @param {number} timestamp */
 function render(timestamp) {
   const deltaTime = timestamp - lastTimestamp;
   lastTimestamp = timestamp;
@@ -188,8 +186,7 @@ requestAnimationFrame(render);
 
 document.body.insertAdjacentHTML(
   'beforeend',
-  `
-  <main>
+  `<main>
     <h1>GEAR CUBE</h1>
     <a
       class="button"
