@@ -3,12 +3,12 @@
   "author": "brybrant",
   "license": "GPL-3.0-only",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
-    "predev": "node ./preprocess.js",
-    "dev": "vite",
-    "prebuild": "node ./preprocess.js",
+    "predev": "bun ./preprocess.ts",
+    "dev": "vite --host",
+    "prebuild": "bun ./preprocess.ts",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -18,16 +18,15 @@
   },
   "homepage": "https://brybrant.github.io/gear-cube/",
   "dependencies": {
-    "three": "^0.185.0"
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@brybrant/sass-okhsv-okhsl": "^1.1.0",
     "@brybrant/svg-icons": "github:brybrant/svg-icons",
-    "@brybrant/vite-config": "^1.0.0",
-    "rollup-plugin-three-minify": "^3.0.0",
-    "vite": "^7.3.6"
-  },
-  "browserslist": [
-    "> 1%, not dead, not ie 11, not op_mini all"
-  ]
+    "@brybrant/vite-config": "^1.4.0",
+    "@types/bun": "^1.4.2",
+    "@types/three": "^0.186.0",
+    "rollup-plugin-three-minify": "^3.0.2",
+    "vite": "^8.3.4"
+  }
 }

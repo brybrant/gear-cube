@@ -1,14 +1,10 @@
 import { BufferAttribute, BufferGeometry } from 'three';
 
-import * as center from './models/gear-center.js';
-import * as large from './models/gear-large.js';
-import * as small from './models/gear-small.js';
+import * as center from './models/gear-center.ts';
+import * as large from './models/gear-large.ts';
+import * as small from './models/gear-small.ts';
 
-/**
- * @param {number[]} vertices
- * @param {number[]} indices
- */
-function createGeometry(vertices, indices) {
+const createGeometry = (vertices: Float32Array, indices: Uint16Array) => {
   const positions = new Float32Array(indices.length * 3);
 
   let dst = 0;
@@ -27,7 +23,7 @@ function createGeometry(vertices, indices) {
   geometry.computeVertexNormals();
 
   return geometry;
-}
+};
 
 export const geometryCenter = createGeometry(center.vertices, center.indices);
 

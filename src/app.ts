@@ -10,7 +10,7 @@ import {
 
 import GitHubSVG from '@brybrant/svg-icons/GitHub.svg';
 
-import { geometryCenter, geometryLarge, geometrySmall } from './geometry.js';
+import { geometryCenter, geometryLarge, geometrySmall } from './geometry.ts';
 
 import fragmentShader from './glsl/fragment.glsl';
 import vertexShader from './glsl/vertex.glsl';
@@ -65,30 +65,33 @@ const deg360 = Math.PI * 2;
  */
 const isoAngle = Math.atan(Math.sin(Math.PI / 4));
 
-const gearCube = new BatchedMesh(9, 4692, 0, material);
+const vertexCount =
+  geometryCenter.getAttribute('position').count +
+  geometryLarge.getAttribute('position').count +
+  geometrySmall.getAttribute('position').count;
+
+const gearCube = new BatchedMesh(9, vertexCount, 0, material);
 
 const transformMatrix = new Matrix4();
 
 class BatchedMeshInstance extends Euler {
   /**
-   * @param {number} geometryID `BatchedMesh` geometry ID
-   * @param {number} x Initial rotation around X axis (in radians)
-   * @param {number} y Initial rotation around Y axis (in radians)
-   * @param {number} z Initial rotation around Z axis (in radians)
+   * @param geometryID `BatchedMesh` geometry ID
+   * @param x Initial rotation around X axis (in radians)
+   * @param y Initial rotation around Y axis (in radians)
+   * @param z Initial rotation around Z axis (in radians)
    */
-  constructor(geometryID, x, y, z) {
+  constructor(geometryID: number, x: number, y: number, z: number) {
     super(x, y, z, 'YXZ');
 
-    this.id = gearCube.addInstance(geometryID);
+    const id = gearCube.addInstance(geometryID);
 
-    this._onChange(this.setRotation);
-  }
+    /** Callback to apply rotation to this `BatchedMesh` geometry instance */
+    this._onChange(() => {
+      transformMatrix.makeRotationFromEuler(this);
 
-  /** Callback to apply rotation to this `BatchedMesh` geometry instance */
-  setRotation() {
-    transformMatrix.makeRotationFromEuler(this);
-
-    gearCube.setMatrixAt(this.id, transformMatrix);
+      gearCube.setMatrixAt(id, transformMatrix);
+    });
   }
 }
 
@@ -98,7 +101,7 @@ geometryLarge.translate(0, 0, 12.09);
 
 const gearLargeGeometryId = gearCube.addGeometry(geometryLarge);
 
-const largeGears = [];
+const largeGears: BatchedMeshInstance[] = [];
 
 for (let i = 0; i < 4; i++) {
   largeGears.push(
@@ -117,7 +120,7 @@ geometrySmall.translate(0, 0, 16.85);
 
 const gearSmallGeometryId = gearCube.addGeometry(geometrySmall);
 
-const smallGears = [];
+const smallGears: BatchedMeshInstance[] = [];
 
 for (let i = 0; i < 4; i++) {
   smallGears.push(
@@ -133,7 +136,8 @@ for (let i = 0; i < 4; i++) {
 /** Center */
 geometryCenter.rotateX(deg90);
 geometryCenter.computeBoundingBox();
-geometryCenter.translate(0, geometryCenter.boundingBox.min.y / -2, 0);
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+geometryCenter.translate(0, geometryCenter.boundingBox!.min.y / -2, 0);
 
 const gearCenterGeometryId = gearCube.addGeometry(geometryCenter);
 gearCube.addInstance(gearCenterGeometryId);
@@ -161,8 +165,7 @@ const rotationAngle = 6e-5;
 
 let lastTimestamp = performance.now();
 
-/** @param {number} timestamp */
-function render(timestamp) {
+const render = (timestamp: number) => {
   const deltaTime = timestamp - lastTimestamp;
   lastTimestamp = timestamp;
 
@@ -177,12 +180,12 @@ function render(timestamp) {
 
   renderer.render(scene, camera);
 
-  requestAnimationFrame(render);
-}
+  window.requestAnimationFrame(render);
+};
 
 document.body.appendChild(renderer.domElement);
 
-requestAnimationFrame(render);
+window.requestAnimationFrame(render);
 
 document.body.insertAdjacentHTML(
   'beforeend',
@@ -192,6 +195,8 @@ document.body.insertAdjacentHTML(
       class="button"
       href="https://github.com/brybrant/gear-cube"
       target="_blank"
+      rel="noopener noreferrer"
+      title="GitHub"
     >
       ${GitHubSVG}
     </a>
